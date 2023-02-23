@@ -29,8 +29,9 @@ const RoomLoginScreen = () => {
         AsyncStorage.setItem('token', JSON.stringify(result.data));
         
         navigation.navigate('ChatScreen', {
-          roomName: roomName,
-          username: username});
+            roomName: roomName,
+            username: username}
+          );
 
     }else{
         alert(result.error);

@@ -1,13 +1,15 @@
 import { NavigationContainer,  } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Pressable, StyleSheet, Text, View ,} from 'react-native';
 import LoginScreen from './screens/LoginScreen';
 import ChatScreen from './screens/ChatScreen';
 import RegisterScreen from './screens/Register';
 import CreateRoom from './screens/CreateRoom';
 import RoomLogin from './screens/RoomLoginScreen'
+import { FontAwesome } from '@expo/vector-icons';
 
 import React from 'react';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -19,15 +21,26 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
          <Stack.Screen options={{headerShown: false }} name="Login" component={LoginScreen} />
-         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{
-          headerRight: () => (
-            <Button
-              onPress={() => navigator.navigate('ChatModal')}
-              title="Info"
-              color="#fff"
-            />
-          ),
-        }}/>
+         <Stack.Screen name="ChatScreen" 
+          component={ChatScreen}
+          options={
+            {headerRight : () => (
+              <Pressable
+                onPress={() => navigator.navigate('ChatModal')}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.5 : 1,
+                })}>
+                <FontAwesome
+                  name="info-circle"
+                  size={25}
+                  color={Colors.black}
+                  style={{ marginRight: 15 }}
+                />
+              </Pressable>
+            )
+          }}
+          />
+        
          <Stack.Screen name="Register" component={RegisterScreen} />
          <Stack.Screen name="CreateRoom" component={CreateRoom} />
          <Stack.Screen name="RoomLogin" component={RoomLogin} />
