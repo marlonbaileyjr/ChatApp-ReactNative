@@ -1,13 +1,41 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
-import CreateRoom from './CreateRoom';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { url } from '../App';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RoomLoginScreen = () => {
   const [roomName, setRoomName] = useState('')
   const [roomPassword, setRoomPassword] = useState('')
 
+  const username = useRoute().params;
+
   const navigation: any = useNavigation();
+
+  async function joinRoom() {    
+    const result = await fetch(`${url}/api/join-room`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            roomName, 
+            roomPassword,
+            username
+        })
+    }).then(res => res.json());
+    
+    if(result.status==='ok'){
+        AsyncStorage.setItem('token', JSON.stringify(result.data));
+        
+        navigation.navigate('ChatScreen', {
+          roomName: roomName,
+          username: username});
+
+    }else{
+        alert(result.error);
+    }
+}
   return (
     <KeyboardAvoidingView 
     style={styles.container}
@@ -30,7 +58,7 @@ const RoomLoginScreen = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          //onPress={Join Room}
+          onPress={joinRoom}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Join Room</Text>

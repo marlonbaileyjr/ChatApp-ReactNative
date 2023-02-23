@@ -6,19 +6,20 @@ import ChatScreen from './screens/ChatScreen';
 import RegisterScreen from './screens/Register';
 import CreateRoom from './screens/CreateRoom';
 import RoomLogin from './screens/RoomLoginScreen'
-import ChatModal from './screens/ChatModal';
+
 import React from 'react';
 
 
 const Stack = createNativeStackNavigator();
 const navigator: any = createNativeStackNavigator();
+const url: string = 'http://100.26.138.225:3000';
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
          <Stack.Screen options={{headerShown: false }} name="Login" component={LoginScreen} />
-         <Stack.Screen name="Chat" component={ChatScreen} options={{
+         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{
           headerRight: () => (
             <Button
               onPress={() => navigator.navigate('ChatModal')}
@@ -34,6 +35,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
+export { url };
 
 const styles = StyleSheet.create({
   container: {

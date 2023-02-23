@@ -1,9 +1,35 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { url } from '../App';
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
     const [roomPassword, setRoomPassword] = useState('')
+    const navigation: any = useNavigation();
+    const username = useRoute().params;
+
+
+    async function createRoom() {        
+        const result = await fetch(`${url}/api/create-room`,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomName, 
+                roomPassword,
+                username
+            })
+        }).then(res => res.json());
+        
+        if(result.status==='ok'){
+            alert('Room Created successfully');
+            navigation.navigate("RoomLogin", {username: username})
+        }else{
+            alert(result.error);
+        }
+    }
 
   return (
     <KeyboardAvoidingView
@@ -28,7 +54,7 @@ const CreateRoom = () => {
 
         <TouchableOpacity
         style={styles.button}
-        //onPress={creteRoom}
+        onPress={createRoom}
         >
             <Text style={styles.buttonText} >Create Room</Text>
         </TouchableOpacity>

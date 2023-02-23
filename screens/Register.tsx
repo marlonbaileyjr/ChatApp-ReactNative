@@ -1,9 +1,34 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import { url } from '../App';
 
 const Register = () => {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+  const navigation: any = useNavigation();
+
+  async function registerUser() {
+    
+    const result = await fetch(`${url}/api/register`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username, 
+            password
+        })
+    }).then(res => res.json());
+    
+    if(result.status==='ok'){
+        alert('User registered successfully');
+        navigation.navigate('LoginScreen');
+    }else{
+        alert(result.error);
+    }
+}
 
   return (
     <KeyboardAvoidingView
@@ -12,9 +37,9 @@ const Register = () => {
     >
         <View style={styles.inputContainer}>
             <TextInput 
-            placeholder="Email" 
-            value={email}
-            onChangeText={text => setEmail(text)} 
+            placeholder="username" 
+            value={username}
+            onChangeText={text => setUsername(text)} 
             style={styles.input}
             />
             <TextInput 
@@ -28,7 +53,7 @@ const Register = () => {
 
         <TouchableOpacity 
         style={styles.button}
-        //onPress={handleSignUp}
+        onPress={registerUser}
         >
             <Text style={styles.buttonText} >Register</Text>
         </TouchableOpacity>
