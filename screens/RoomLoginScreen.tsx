@@ -1,14 +1,19 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { url } from '../App';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const url: string = 'http://100.26.138.225:3000';
 const RoomLoginScreen = () => {
   const [roomName, setRoomName] = useState('')
   const [roomPassword, setRoomPassword] = useState('')
 
-  const username = useRoute().params;
+  type RoomParams = {
+    username: string;
+  }
+  
+  const route = useRoute<RouteProp<Record<string, RoomParams>, string>>();
+  const { username } = route.params;
 
   const navigation: any = useNavigation();
 
@@ -43,6 +48,7 @@ const RoomLoginScreen = () => {
     behavior="padding"
     >
       <View style={styles.inputContainer}>
+        <Text style={styles.header}>Welcome {username}</Text>
         <TextInput 
           placeholder="Room Name" 
           value={roomName}
@@ -82,6 +88,12 @@ const RoomLoginScreen = () => {
 export default RoomLoginScreen
 
 const styles = StyleSheet.create({
+header:{
+  fontSize: 24,
+  fontWeight: '700',
+  marginBottom: 20
+  
+},
 container:{
   flex:1,
   alignItems:'center',

@@ -1,10 +1,24 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Header } from 'react-native/Libraries/NewAppScreen';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 
 const ChatScreen = () => {
-  //const {roomName, username} = useRoute().params
+  type RoomParams = {
+    username: string;
+    roomName: string;
+  }
+  
+  const route = useRoute<RouteProp<Record<string, RoomParams>, string>>();
+  const { username, roomName } = route.params;
+  const navigation= useNavigation();
+  
+  useEffect(() => {
+    navigation.setOptions({ title: roomName })
+  }, [])
+  
+
+
   
 
   return (

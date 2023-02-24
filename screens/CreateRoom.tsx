@@ -1,14 +1,13 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { url } from '../App';
 
 const CreateRoom = () => {
     const [roomName, setRoomName] = useState('')
     const [roomPassword, setRoomPassword] = useState('')
     const navigation: any = useNavigation();
     const username = useRoute().params;
-
+    const url: string = 'http://100.26.138.225:3000';
 
     async function createRoom() {        
         const result = await fetch(`${url}/api/create-room`,{

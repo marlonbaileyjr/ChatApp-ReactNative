@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { url } from '../App';
+
 
 const Register = () => {
+    const url: string = 'http://100.26.138.225:3000';
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 

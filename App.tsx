@@ -1,4 +1,4 @@
-import { NavigationContainer,  } from '@react-navigation/native';
+import { NavigationContainer, useRoute,  } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button, StyleSheet, Text, View, Pressable } from 'react-native';
 import LoginScreen from './screens/LoginScreen';
@@ -7,36 +7,38 @@ import RegisterScreen from './screens/Register';
 import CreateRoom from './screens/CreateRoom';
 import RoomLogin from './screens/RoomLoginScreen'
 import { FontAwesome } from '@expo/vector-icons';
+import ChatModal from './screens/ChatModal';
 
 import React from 'react';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-
 const Stack = createNativeStackNavigator();
-const navigator: any = createNativeStackNavigator();
-const url: string = 'http://100.26.138.225:3000';
 
 export default function App() {
+  //const roomName = useRoute().params
   return (
     <NavigationContainer>
       <Stack.Navigator>
          <Stack.Screen options={{headerShown: false }} name="Login" component={LoginScreen} />
-         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{
+         <Stack.Group screenOptions={{ presentation: 'modal' }}>
+            <Stack.Screen name="Info" component={ChatModal} />
+         </Stack.Group>
+         <Stack.Screen name="ChatScreen" component={ChatScreen} options={({ navigation }) => ({
+          //title: {roomName},
           headerRight: () => (
             <Pressable
-              onPress={() => navigator.navigate('ChatModal')}
+              onPress={() => navigation.navigate('Info')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
-                <FontAwesome 
-                  name="info-circle"
-                  size={24}
-                  color="black"
-                  style={{marginRight: 15}}
-                  />
+              <FontAwesome 
+                name="info-circle"
+                size={24}
+                color= {Colors.black}
+                style={{marginRight: 15}}
+              />
             </Pressable>
-          )
-            }} />
+          )})}/>
          <Stack.Screen name="Register" component={RegisterScreen} />
          <Stack.Screen name="CreateRoom" component={CreateRoom} />
          <Stack.Screen name="RoomLogin" component={RoomLogin} />
@@ -44,7 +46,7 @@ export default function App() {
     </NavigationContainer>
   );
 }
-export { url };
+
 
 const styles = StyleSheet.create({
   container: {
