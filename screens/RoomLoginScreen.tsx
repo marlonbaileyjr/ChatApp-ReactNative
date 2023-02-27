@@ -1,9 +1,8 @@
 import { StyleSheet, Text, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-
+import url from '../utils/url'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const url: string = 'http://100.26.138.225:3000';
 const RoomLoginScreen = () => {
   const [roomName, setRoomName] = useState('')
   const [roomPassword, setRoomPassword] = useState('')

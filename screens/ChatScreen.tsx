@@ -1,49 +1,86 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, TextInput, Button, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import io from 'socket.io-client'
+import url from '../utils/url'
+const socket = io(url);
 
 export default function ChatScreen() {
-    type RoomParams = {
-        username: string;
-        roomName: string;
-      }
-      
-      const route = useRoute<RouteProp<Record<string, RoomParams>, string>>();
-      const { username, roomName } = route.params;
-      const navigation= useNavigation();
-      
-      useEffect(() => {
-        navigation.setOptions({ title: roomName })
-      }, [])
+  type message = {
+    username: string;
+    text: string;
+    time: string;
+  };
+
+  type RoomParams = {
+    username: string;
+    roomName: string;
+  };
+
+  const route = useRoute<RouteProp<Record<string, RoomParams>, string>>();
+  const { username, roomName } = route.params;
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: roomName })
+  }, [])
 
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    'Hello!',
-    'How are you?',
-    'I am fine, thanks. And you?',
-    'I am good too.',
-  ]);
+  const [messages, setMessages] = useState<message[]>([]);
 
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
+  const getCurrentTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      return `${hours < 10 ? '0': ''}${hours}:${minutes < 10 ? '0': ''}${minutes}`;
+    }
+  
 
+    
+  
   const handleSend = () => {
-    setMessages([...messages, message]);
+    const messageObject = {
+      username: username,
+      text: message,
+      time: getCurrentTime()
+    } 
+
+    const newMessages = [...messages, messageObject];
+    setMessages(newMessages);
     setMessage('');
+    socket.emit('chatMessage', messageObject);
   };
+
+ 
+
+  //WEBSOCKET
+  useEffect(() => {
+
+  socket.emit('joinRoom', { username, roomName });
+
+  socket.on('message', (msg: message) => {
+    console.log(msg)
+    setMessages([...messages, msg]);
+  })
+}, [])
 
   return (
     <View style={styles.container}>
       <ScrollView
         ref={scrollViewRef}
-        contentContainerStyle={[styles.messagesContainer, { marginBottom: '25%' }]} // add marginBottom style
+        style={styles.messagesContainer}
+        contentContainerStyle={styles.messagesContentContainer}
       >
         {messages.map((msg, index) => (
           <View key={index} style={styles.messageContainer}>
-            <Text style={styles.message}>{msg}</Text>
+            <Text style={styles.msgUsername}>{msg.username}</Text>
+            <Text style={styles.message}>{msg.text}</Text>
+            <Text style={styles.msgTime}>{msg.time}</Text>
           </View>
         ))}
       </ScrollView>
@@ -54,8 +91,8 @@ export default function ChatScreen() {
           value={message}
           onChangeText={setMessage}
         />
-        <TouchableOpacity style={styles.button} onPress={handleSend} >
-            <Text style={styles.buttonText}>Send</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSend}>
+          <Text style={styles.buttonText}>Send</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -68,8 +105,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   messagesContainer: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
+    flex: 1,
+  },
+  messagesContentContainer: {
+    paddingBottom: '25%',
   },
   messageContainer: {
     backgroundColor: '#ddd',
@@ -82,13 +121,21 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 16,
   },
+  msgUsername: {
+    fontSize: 12,
+  },
+  msgTime: {
+    fontSize: 12,
+    color: '#666',
+    justifyContent: 'flex-end',
+  },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     position: 'absolute',
-    bottom: "1%",
+    bottom: 0,
     left: 0,
     right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -113,4 +160,4 @@ buttonText:{
     fontWeight: '700',
     fontSize: 16
 },
-});
+})

@@ -1,6 +1,8 @@
 import { Alert, Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
+import socket from 'socket.io-client'
+import url from '../utils/url'
 
 const ChatModal = () => {
   const navigation= useNavigation()

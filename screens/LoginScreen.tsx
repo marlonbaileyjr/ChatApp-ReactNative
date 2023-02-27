@@ -2,11 +2,11 @@ import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, Vi
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import url from '../utils/url'
 
 const LoginScreen = () => {  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const url: string = 'http://100.26.138.225:3000';
 
 
   const navigation: any = useNavigation();
